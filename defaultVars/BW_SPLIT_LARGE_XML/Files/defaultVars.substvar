@@ -1,0 +1,23 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>enconding</name>
+			<value>UTF-8</value>
+			<description>Enconding File</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1683993169276</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>pathFile</name>
+			<value>C:\projetos\tibco\BW5_SPLIT_LARGE_XML\Shared Resources\Files\Input/employess.txt</value>
+			<description>Path XML File</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1684146559066</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

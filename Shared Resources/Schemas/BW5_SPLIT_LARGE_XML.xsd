@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/BW5_SPLIT_LARGE_XML/Shared Resources/Schemas/Schema.xsd"
+	 targetNamespace="http://www.tibco.com/schemas/BW5_SPLIT_LARGE_XML/Shared Resources/Schemas/Schema.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:complexType name="EmployeeType">
+		<xs:sequence>
+			<xs:element name="id" type="xs:string"/>
+			<xs:element name="firstName" type="xs:string"/>
+			<xs:element name="lastName" type="xs:string"/>
+			<xs:element name="email" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="employee" type="EmployeeType"/>
+	<xs:element name="employees">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="employee" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

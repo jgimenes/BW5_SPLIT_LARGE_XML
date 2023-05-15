@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/BW5_SPLIT_LARGE_XML/Shared Resources/Schemas/Schema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/file/v2" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/file">
+    <xsd:import namespace="http://www.tibco.com/schemas/BW5_SPLIT_LARGE_XML/Shared Resources/Schemas/Schema.xsd" schemaLocation="/Shared Resources/Schemas/BW5_SPLIT_LARGE_XML.xsd"/>
+    <pd:name>Business Processes/Sub Processes/Split Large XML Messages.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startDescription>Start of Flow.</pd:startDescription>
+    <pd:startX>172</pd:startX>
+    <pd:startY>63</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endDescription>End of Flow.</pd:endDescription>
+    <pd:endX>1058</pd:endX>
+    <pd:endY>203</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <_processVariable>
+            <xsd:element name="executationControl">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="idxInit" type="xsd:int"/>
+                        <xsd:element name="idxEnd" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </_processVariable>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1683987987009</pd:targetNamespace>
+    <pd:group name="Group Split Large XML File">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>428</pd:x>
+        <pd:y>76</pd:y>
+        <pd:width>472</pd:width>
+        <pd:height>236</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>repeat</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>idx</pd:indexSlot>
+            <pd:activityOutputName/>
+            <pd:repeatCondition>$idx = ceiling( count($Parse-Employees-XML/pfx:employees/pfx:employee) div $_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/nodeSize)</pd:repeatCondition>
+            <pd:accumulateOutput>false</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Set Control</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Update Control</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Set Control</pd:from>
+            <pd:to>Map Data</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map Data</pd:from>
+            <pd:to>Update Control</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Set Control">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:description>Set execution control variables.</pd:description>
+            <pd:x>528</pd:x>
+            <pd:y>201</pd:y>
+            <config>
+                <variableName>_processVariable</variableName>
+            </config>
+            <pd:inputBindings>
+                <executationControl>
+                    <idxInit>
+                        <xsl:value-of select="$_processVariable/executationControl/idxInit + 1"/>
+                    </idxInit>
+                    <xsl:choose>
+                        <xsl:when test="$idx = 1">
+                            <idxEnd>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/nodeSize"/>
+                            </idxEnd>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <idxEnd>
+                                <xsl:value-of select="$_processVariable/executationControl/idxInit + $_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/nodeSize"/>
+                            </idxEnd>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </executationControl>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Map Data">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:description>Mapper Splited Employees.</pd:description>
+            <pd:x>655</pd:x>
+            <pd:y>200</pd:y>
+            <config>
+                <element ref="pfx:employees"/>
+            </config>
+            <pd:inputBindings>
+                <pfx:employees>
+                    <xsl:variable name="initValue" select="$_processVariable/executationControl/idxInit"/>
+                    <xsl:variable name="endValue" select="$_processVariable/executationControl/idxEnd"/>
+                    <xsl:for-each select="$Parse-Employees-XML/pfx:employees/pfx:employee[position() >= $initValue and position() &lt;= $endValue]">
+                        <pfx:employee>
+                            <pfx:id>
+                                <xsl:value-of select="./pfx:id"/>
+                            </pfx:id>
+                            <pfx:firstName>
+                                <xsl:value-of select="./pfx:firstName"/>
+                            </pfx:firstName>
+                            <pfx:lastName>
+                                <xsl:value-of select="./pfx:lastName"/>
+                            </pfx:lastName>
+                            <pfx:email>
+                                <xsl:value-of select="./pfx:email"/>
+                            </pfx:email>
+                        </pfx:employee>
+                    </xsl:for-each>
+                </pfx:employees>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Update Control">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:description>Update execution control variables.</pd:description>
+            <pd:x>800</pd:x>
+            <pd:y>200</pd:y>
+            <config>
+                <variableName>_processVariable</variableName>
+            </config>
+            <pd:inputBindings>
+                <executationControl>
+                    <idxInit>
+                        <xsl:value-of select="$_processVariable/executationControl/idxEnd"/>
+                    </idxInit>
+                    <idxEnd>
+                        <xsl:value-of select="$_processVariable/executationControl/idxEnd"/>
+                    </idxEnd>
+                </executationControl>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Initialize Control">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:description>Initialize execution control variables.</pd:description>
+        <pd:x>309</pd:x>
+        <pd:y>201</pd:y>
+        <config>
+            <variableName>_processVariable</variableName>
+        </config>
+        <pd:inputBindings>
+            <executationControl>
+                <idxInit>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/idxInit"/>
+                </idxInit>
+                <idxEnd>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/idxEnd"/>
+                </idxEnd>
+            </executationControl>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse Employees XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:description>Parse the employees file to XML.</pd:description>
+        <pd:x>172</pd:x>
+        <pd:y>337</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:employees"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Read-Employees-File/ns1:ReadActivityOutputTextClass/fileContent/textContent"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Read Employees File">
+        <pd:type>com.tibco.plugin.file.FileReadActivity</pd:type>
+        <pd:resourceType>ae.activities.FileReadActivity</pd:resourceType>
+        <pd:description>Read Employees File</pd:description>
+        <pd:x>172</pd:x>
+        <pd:y>201</pd:y>
+        <config>
+            <encoding>text</encoding>
+        </config>
+        <pd:inputBindings>
+            <ns2:ReadActivityInputClass>
+                <fileName>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/Files/pathFile"/>
+                </fileName>
+                <encoding>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BW_SPLIT_LARGE_XML/Files/enconding"/>
+                </encoding>
+            </ns2:ReadActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Read Employees File</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Read Employees File</pd:from>
+        <pd:to>Parse Employees XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse Employees XML</pd:from>
+        <pd:to>Initialize Control</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Initialize Control</pd:from>
+        <pd:to>Group Split Large XML File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group Split Large XML File</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

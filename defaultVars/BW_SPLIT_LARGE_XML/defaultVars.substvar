@@ -1,0 +1,32 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>idxEnd</name>
+			<value>1</value>
+			<description>End Indice</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1683994440981</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>idxInit</name>
+			<value>0</value>
+			<description>Initial Indice</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1683991769093</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>nodeSize</name>
+			<value>3</value>
+			<description>Node Size</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1683994441004</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>
